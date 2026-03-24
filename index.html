@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>☠ AGENTE DAS TREVAS ☠</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=Special+Elite&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --void: #000000;
+    --abyss: #080808;
+    --shadow: #0d0d0d;
+    --blood: #8b0000;
+    --crimson: #cc0000;
+    --rust: #3d0000;
+    --bone: #c8c0b0;
+    --ash: #666060;
+    --fog: #1a1414;
+    --flicker: #ff2200;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--void);
+    color: var(--bone);
+    font-family: 'Share Tech Mono', monospace;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-x: hidden;
+    cursor: crosshair;
+  }
+
+  /* Noise overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.4;
+  }
+
+  /* Vignette */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.95) 100%);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .container {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 860px;
+    padding: 0 1rem;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  header {
+    text-align: center;
+    padding: 2.5rem 0 1.5rem;
+    position: relative;
+  }
+
+  .pentagram {
+    font-size: 1.2rem;
+    color: var(--blood);
+    letter-spacing: 0.5rem;
+    animation: flicker 4s infinite;
+  }
+
+  @keyframes flicker {
+    0%, 95%, 100% { opacity: 1; }
+    96% { opacity: 0.3; }
+    97% { opacity: 1; }
+    98% { opacity: 0.1; }
+    99% { opacity: 0.8; }
+  }
+
+  h1 {
+    font-family: 'UnifrakturMaguntia', cursive;
+    font-size: clamp(2.5rem, 8vw, 5rem);
+    color: var(--bone);
+    text-shadow:
+      0 0 20px rgba(139,0,0,0.8),
+      0 0 60px rgba(139,0,0,0.3),
+      2px 2px 0 #000;
+    line-height: 1;
+    animation: breathe 6s ease-in-out infinite;
+  }
+
+  @keyframes breathe {
+    0%, 100% { text-shadow: 0 0 20px rgba(139,0,0,0.8), 0 0 60px rgba(139,0,0,0.3), 2px 2px 0 #000; }
+    50% { text-shadow: 0 0 40px rgba(200,0,0,1), 0 0 100px rgba(139,0,0,0.6), 2px 2px 0 #000; }
+  }
+
+  .subtitle {
+    font-family: 'Special Elite', cursive;
+    color: var(--ash);
+    font-size: 0.75rem;
+    letter-spacing: 0.3rem;
+    text-transform: uppercase;
+    margin-top: 0.5rem;
+  }
+
+  .divider {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--blood), var(--crimson), var(--blood), transparent);
+    margin: 1.5rem 0;
+    position: relative;
+  }
+
+  .divider::before {
+    content: '✦ ☠ ✦';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--void);
+    padding: 0 1rem;
+    color: var(--blood);
+    font-size: 0.8rem;
+  }
+
+  /* PROMPT CONFIG */
+  .config-panel {
+    background: var(--fog);
+    border: 1px solid var(--rust);
+    border-left: 3px solid var(--blood);
+    padding: 1rem 1.2rem;
+    margin-bottom: 1rem;
+  }
+
+  .config-label {
+    font-size: 0.65rem;
+    color: var(--blood);
+    letter-spacing: 0.2rem;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+    font-family: 'Special Elite', cursive;
+  }
+
+  .persona-select {
+    width: 100%;
+    background: var(--abyss);
+    border: 1px solid var(--rust);
+    color: var(--bone);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.85rem;
+    padding: 0.5rem;
+    cursor: pointer;
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+
+  .persona-select:focus {
+    border-color: var(--blood);
+    box-shadow: 0 0 8px rgba(139,0,0,0.4);
+  }
+
+  /* CHAT AREA */
+  .chat-box {
+    flex: 1;
+    border: 1px solid var(--rust);
+    background: var(--abyss);
+    min-height: 350px;
+    max-height: 420px;
+    overflow-y: auto;
+    padding: 1.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    scrollbar-width: thin;
+    scrollbar-color: var(--rust) var(--void);
+    position: relative;
+  }
+
+  .chat-box::-webkit-scrollbar { width: 4px; }
+  .chat-box::-webkit-scrollbar-track { background: var(--void); }
+  .chat-box::-webkit-scrollbar-thumb { background: var(--rust); }
+
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    min-height: 280px;
+    color: var(--ash);
+    text-align: center;
+    gap: 0.8rem;
+    opacity: 0.6;
+  }
+
+  .empty-state .skull {
+    font-size: 3.5rem;
+    animation: sway 3s ease-in-out infinite;
+  }
+
+  @keyframes sway {
+    0%, 100% { transform: rotate(-5deg); }
+    50% { transform: rotate(5deg); }
+  }
+
+  .empty-state p {
+    font-family: 'Special Elite', cursive;
+    font-size: 0.85rem;
+    letter-spacing: 0.1rem;
+  }
+
+  /* MESSAGES */
+  .message {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    animation: fadeUp 0.4s ease;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .message.user { align-items: flex-end; }
+  .message.ai { align-items: flex-start; }
+
+  .msg-label {
+    font-size: 0.6rem;
+    letter-spacing: 0.15rem;
+    text-transform: uppercase;
+    color: var(--ash);
+  }
+
+  .msg-label.user-label { color: var(--blood); }
+
+  .bubble {
+    max-width: 82%;
+    padding: 0.75rem 1rem;
+    font-size: 0.87rem;
+    line-height: 1.6;
+    white-space: pre-wrap;
+  }
+
+  .bubble.user {
+    background: var(--rust);
+    border: 1px solid var(--blood);
+    border-radius: 2px 0 2px 2px;
+    color: var(--bone);
+    text-align: right;
+  }
+
+  .bubble.ai {
+    background: var(--shadow);
+    border: 1px solid #1a1414;
+    border-left: 2px solid var(--blood);
+    border-radius: 0 2px 2px 2px;
+    color: var(--bone);
+  }
+
+  /* TYPING INDICATOR */
+  .typing {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.75rem 1rem;
+    background: var(--shadow);
+    border-left: 2px solid var(--blood);
+    width: fit-content;
+  }
+
+  .typing span {
+    width: 5px;
+    height: 5px;
+    background: var(--blood);
+    border-radius: 50%;
+    animation: pulse 1.2s ease-in-out infinite;
+  }
+
+  .typing span:nth-child(2) { animation-delay: 0.2s; }
+  .typing span:nth-child(3) { animation-delay: 0.4s; }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 0.2; transform: scale(0.8); }
+    50% { opacity: 1; transform: scale(1.2); background: var(--crimson); }
+  }
+
+  /* INPUT AREA */
+  .input-area {
+    display: flex;
+    gap: 0;
+    margin-top: 0.8rem;
+    border: 1px solid var(--rust);
+    background: var(--abyss);
+  }
+
+  .input-area:focus-within {
+    border-color: var(--blood);
+    box-shadow: 0 0 15px rgba(139,0,0,0.2);
+  }
+
+  textarea {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--bone);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.87rem;
+    padding: 0.9rem 1rem;
+    outline: none;
+    resize: none;
+    min-height: 52px;
+    max-height: 120px;
+    line-height: 1.5;
+  }
+
+  textarea::placeholder { color: var(--ash); opacity: 0.5; }
+
+  textarea::-webkit-scrollbar { width: 3px; }
+  textarea::-webkit-scrollbar-thumb { background: var(--rust); }
+
+  .send-btn {
+    background: var(--rust);
+    border: none;
+    border-left: 1px solid var(--blood);
+    color: var(--bone);
+    font-family: 'Special Elite', cursive;
+    font-size: 0.75rem;
+    letter-spacing: 0.1rem;
+    padding: 0 1.2rem;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: background 0.2s;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+  }
+
+  .send-btn:hover { background: var(--blood); }
+  .send-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  /* FOOTER */
+  footer {
+    text-align: center;
+    padding: 1.5rem 0;
+    color: var(--rust);
+    font-size: 0.65rem;
+    letter-spacing: 0.2rem;
+  }
+
+  /* Drip effect on top */
+  .drip-bar {
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, var(--void), var(--blood) 30%, var(--crimson) 50%, var(--blood) 70%, var(--void));
+    margin-bottom: 0;
+    animation: bloodPulse 3s ease-in-out infinite;
+  }
+
+  @keyframes bloodPulse {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; }
+  }
+
+  /* scanlines */
+  .scanlines {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 3;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.08) 2px,
+      rgba(0,0,0,0.08) 4px
+    );
+  }
+</style>
+</head>
+<body>
+
+<div class="scanlines"></div>
+<div class="drip-bar"></div>
+
+<div class="container">
+  <header>
+    <div class="pentagram">✦ ✦ ✦ ✦ ✦</div>
+    <h1>Agente das Trevas</h1>
+    <p class="subtitle">Interface Neural das Sombras · v6.6.6</p>
+  </header>
+
+  <div class="divider"></div>
+
+  <div class="config-panel">
+    <div class="config-label">⚔ Invocar Persona Sombria</div>
+    <select class="persona-select" id="persona">
+      <option value="pirata">☠ Pirata dos Sete Mares Amaldiçoados</option>
+      <option value="yoda">🌑 Mestre Yoda (lado sombrio)</option>
+      <option value="cientista">⚗ Cientista Louco das Trevas</option>
+      <option value="narrador">📺 Narrador de Futebol Histérico</option>
+      <option value="vampiro">🩸 Vampiro Aristocrata</option>
+      <option value="adolescente">😤 Adolescente Impaciente e Dark</option>
+    </select>
+  </div>
+
+  <div class="chat-box" id="chatBox">
+    <div class="empty-state" id="emptyState">
+      <span class="skull">☠</span>
+      <p>As sombras aguardam seu chamado...</p>
+      <p style="font-size:0.7rem; opacity:0.6">Faça uma pergunta ao oráculo sombrio</p>
+    </div>
+  </div>
+
+  <div class="input-area">
+    <textarea
+      id="userInput"
+      placeholder="Fale com as trevas... (Enter para enviar)"
+      rows="2"
+    ></textarea>
+    <button class="send-btn" id="sendBtn" onclick="sendMessage()">Invocar</button>
+  </div>
+
+  <footer>⛧ ALIMENTADO POR INTELIGÊNCIA ARTIFICIAL ⛧ · EMO DARK EDITION · 2025</footer>
+</div>
+
+<script>
+const personas = {
+  pirata: "Você é um pirata sombrio e amaldiçoado dos sete mares das trevas. Responda SEMPRE usando gírias e linguagem de pirata (ahoy, arrr, maldição das profundezas, etc). Seja dramático, épico e um pouco assustador. Fale sobre suas aventuras nas sombras.",
+  yoda: "Você é o Mestre Yoda, mas corrompido pelo lado sombrio da Força. Inverta a ordem das frases como Yoda faz (ex: 'Fortes, as trevas são'), mas com temas sombrios e pessimistas. Mencione o lado sombrio frequentemente.",
+  cientista: "Você é um cientista louco e obcecado pelas trevas. Use linguagem científica misturada com riso maligno (MUHAHAHA), fale sobre experimentos sombrios e teorias perturbadoras. Seja extremamente dramático e teatral.",
+  narrador: "Você é um narrador de futebol completamente histérico. Narre TUDO como se fosse um jogo de futebol dramático — gritos, emoção extrema, GOOOL, que pintura, que jogada — mas aplicado a qualquer assunto técnico que te perguntarem.",
+  vampiro: "Você é um vampiro aristocrata de séculos de existência. Fale com elegância, palavras antiquadas e um leve desprezo pelos mortais. Mencione suas memórias de séculos passados e sua sede de conhecimento (e sangue).",
+  adolescente: "Você é um adolescente emo dark extremamente impaciente e entediado com tudo. Responda de forma breve, use gírias atuais, suspiros (ugh, serio isso?, nossa que chato), mas paradoxalmente explique o conceito de forma correta. Termine com algo sombrio e existencial."
+};
+
+const chatBox = document.getElementById('chatBox');
+const userInput = document.getElementById('userInput');
+const sendBtn = document.getElementById('sendBtn');
+const emptyState = document.getElementById('emptyState');
+let conversationHistory = [];
+
+userInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
+});
+
+function appendMessage(role, text) {
+  if (emptyState) emptyState.style.display = 'none';
+
+  const div = document.createElement('div');
+  div.className = `message ${role}`;
+
+  const label = document.createElement('div');
+  label.className = `msg-label ${role === 'user' ? 'user-label' : ''}`;
+  label.textContent = role === 'user' ? '⚔ Você' : '☠ Oráculo das Trevas';
+
+  const bubble = document.createElement('div');
+  bubble.className = `bubble ${role}`;
+  bubble.textContent = text;
+
+  div.appendChild(label);
+  div.appendChild(bubble);
+  chatBox.appendChild(div);
+  chatBox.scrollTop = chatBox.scrollHeight;
+  return bubble;
+}
+
+function showTyping() {
+  const div = document.createElement('div');
+  div.className = 'message ai';
+  div.id = 'typingIndicator';
+
+  const label = document.createElement('div');
+  label.className = 'msg-label';
+  label.textContent = '☠ Oráculo das Trevas';
+
+  const typing = document.createElement('div');
+  typing.className = 'typing';
+  typing.innerHTML = '<span></span><span></span><span></span>';
+
+  div.appendChild(label);
+  div.appendChild(typing);
+  chatBox.appendChild(div);
+  chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+function removeTyping() {
+  const t = document.getElementById('typingIndicator');
+  if (t) t.remove();
+}
+
+async function sendMessage() {
+  const text = userInput.value.trim();
+  if (!text) return;
+
+  const personaKey = document.getElementById('persona').value;
+  const systemPrompt = personas[personaKey];
+
+  appendMessage('user', text);
+  conversationHistory.push({ role: 'user', content: text });
+  userInput.value = '';
+  sendBtn.disabled = true;
+  showTyping();
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: systemPrompt,
+        messages: conversationHistory
+      })
+    });
+
+    const data = await response.json();
+    const reply = data.content?.[0]?.text || '...as trevas silenciam.';
+
+    removeTyping();
+    appendMessage('ai', reply);
+    conversationHistory.push({ role: 'assistant', content: reply });
+
+  } catch (err) {
+    removeTyping();
+    appendMessage('ai', '☠ As trevas falharam: ' + err.message);
+  }
+
+  sendBtn.disabled = false;
+  userInput.focus();
+}
+</script>
+</body>
+</html>
